@@ -1,4 +1,4 @@
 pub trait Data {
     fn price(&self) -> f64;
-    fn epoch_time(&self) -> u64;
+    fn epoch_time(&self) -> u128;
 }
