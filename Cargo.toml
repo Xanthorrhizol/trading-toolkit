@@ -1,0 +1,9 @@
+[package]
+name = "trading-toolkit"
+version = "0.1.0"
+edition = "2021"
+authors = ["Xanthorrhizol <xanthorrhizol@proton.me>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
