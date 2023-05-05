@@ -1,4 +1,4 @@
-use crate::types::data::Data;
+use super::data::Data;
 
 /// 이동평균
 pub enum MovingAverage {
