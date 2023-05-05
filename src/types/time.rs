@@ -21,9 +21,9 @@ static DAY_IN_MILLISEC: u128 = 24 * HOUR_IN_MILLISEC;
 ///     SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis(),
 /// );
 ///
-/// let days = 2u128;
+/// let days = 2;
 /// let days_in_time = Time::from_days(days);
-/// assert_eq!(days_in_time.inner(), days * 24 * 60 * 60 * 1000 as u128);
+/// assert_eq!(days_in_time.inner(), (days as u128) * 24 * 60 * 60 * 1000 as u128);
 /// ```
 #[derive(Eq, Clone, Ord, PartialOrd)]
 pub struct Time(u128);
@@ -44,8 +44,23 @@ impl Time {
     }
 
     /// return duration of days
-    pub fn from_days(days: u128) -> Self {
-        Self(days * DAY_IN_MILLISEC)
+    pub fn from_days(days: usize) -> Self {
+        Self(days as u128 * DAY_IN_MILLISEC)
+    }
+
+    /// return duration of hours
+    pub fn from_hours(hours: usize) -> Self {
+        Self(hours as u128 * HOUR_IN_MILLISEC)
+    }
+
+    /// return duration of minutes
+    pub fn from_minutes(minutes: usize) -> Self {
+        Self(minutes as u128 * MINUTE_IN_MILLISEC)
+    }
+
+    /// return duration of seconds
+    pub fn from_seconds(seconds: usize) -> Self {
+        Self(seconds as u128 * SEC_IN_MILLISEC)
     }
 
     /// return inner milliseconds value
