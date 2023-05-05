@@ -8,6 +8,7 @@ pub enum MovingAverage {
 }
 
 impl MovingAverage {
+    /// 단순이동평균
     pub fn simple<T>(data: &Vec<T>) -> Self
     where
         T: Data,
@@ -21,6 +22,7 @@ impl MovingAverage {
         Self::Simple(sum / count)
     }
 
+    /// 지수이동평균
     pub fn exponential<T>(data: &Vec<T>) -> Self
     where
         T: Data + Clone,
