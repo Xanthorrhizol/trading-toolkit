@@ -4,4 +4,6 @@ use thiserror::Error;
 pub enum ToolkitError {
     #[error("Empty data")]
     EmptyData,
+    #[error("Data not enough")]
+    DataNotEnough,
 }
