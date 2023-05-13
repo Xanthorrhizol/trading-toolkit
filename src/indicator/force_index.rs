@@ -1,4 +1,4 @@
-use crate::types::data::{Exec, Stock};
+use crate::types::data::{BaseData, Stock};
 
 #[derive(Debug)]
 pub struct ForceIndex {
@@ -7,12 +7,12 @@ pub struct ForceIndex {
 }
 
 // make Force Index usable for MovingAverage
-impl Exec for ForceIndex {
-    fn price(&self) -> f64 {
+impl BaseData for ForceIndex {
+    fn value(&self) -> f64 {
         self.inner
     }
 
-    fn volume(&self) -> u64 {
+    fn weight(&self) -> u64 {
         1
     }
 

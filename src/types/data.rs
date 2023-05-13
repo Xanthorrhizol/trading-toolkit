@@ -1,6 +1,6 @@
-pub trait Exec {
-    fn price(&self) -> f64;
-    fn volume(&self) -> u64;
+pub trait BaseData {
+    fn value(&self) -> f64;
+    fn weight(&self) -> u64;
     fn epoch_time(&self) -> u128;
 }
 

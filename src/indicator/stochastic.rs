@@ -1,6 +1,6 @@
 use super::MovingAverage;
 use crate::types::{
-    data::{Exec, Stock},
+    data::{BaseData, Stock},
     error::ToolkitError,
 };
 
@@ -84,14 +84,14 @@ impl Stochastic {
     }
 }
 
-impl Exec for Stochastic {
-    fn price(&self) -> f64 {
+impl BaseData for Stochastic {
+    fn value(&self) -> f64 {
         match self {
             Self::Fast(f, _epoch_time) | Self::Slow(f, _epoch_time) => f.to_owned(),
         }
     }
 
-    fn volume(&self) -> u64 {
+    fn weight(&self) -> u64 {
         1
     }
 

@@ -1,4 +1,4 @@
-use crate::types::data::Exec;
+use crate::types::data::BaseData;
 
 #[derive(Debug)]
 pub enum MovingAverage {
@@ -10,12 +10,12 @@ impl MovingAverage {
     /// Simple Moving Average
     pub fn simple<T>(data: &Vec<T>) -> Self
     where
-        T: Exec,
+        T: BaseData,
     {
         let mut sum = 0f64;
         let mut count = 0f64;
         for elem in data.iter() {
-            sum += elem.price();
+            sum += elem.value();
             count += 1f64;
         }
         Self::Simple(sum / count)
@@ -24,7 +24,7 @@ impl MovingAverage {
     /// Exponential Moving Average(EMA)
     pub fn exponential<T>(data: &Vec<T>) -> Self
     where
-        T: Exec + Clone,
+        T: BaseData + Clone,
     {
         let mut data = data.clone().to_vec();
         data.sort_by_key(|k| k.epoch_time());
@@ -34,10 +34,10 @@ impl MovingAverage {
         for curr in data.iter() {
             let k = 2f64 / (i + 1f64);
             if first {
-                result = curr.price();
+                result = curr.value();
                 first = false;
             }
-            result = curr.price() * k + result * (1f64 - k);
+            result = curr.value() * k + result * (1f64 - k);
             i += 1f64;
         }
         Self::Exponential(result)

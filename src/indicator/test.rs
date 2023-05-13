@@ -5,19 +5,19 @@ mod tests {
         Stochastic,
     };
     use crate::types::{
-        data::{Exec, Stock},
+        data::{BaseData, Stock},
         time::Time,
     };
 
     static MAX_ERR: f64 = 0.0000000001f64;
 
     #[derive(Clone)]
-    struct ExecData {
+    struct RawBaseData {
         price: f64,
         volume: u64,
         epoch_time: Time,
     }
-    impl ExecData {
+    impl RawBaseData {
         fn new(price: f64, volume: u64, epoch_time: Time) -> Self {
             Self {
                 price,
@@ -26,11 +26,11 @@ mod tests {
             }
         }
     }
-    impl Exec for ExecData {
-        fn price(&self) -> f64 {
+    impl BaseData for RawBaseData {
+        fn value(&self) -> f64 {
             self.price
         }
-        fn volume(&self) -> u64 {
+        fn weight(&self) -> u64 {
             self.volume
         }
         fn epoch_time(&self) -> u128 {
@@ -69,14 +69,14 @@ mod tests {
             }
         }
     }
-    impl Exec for StockData
+    impl BaseData for StockData
     where
         Self: Stock,
     {
-        fn price(&self) -> f64 {
+        fn value(&self) -> f64 {
             self.close_price()
         }
-        fn volume(&self) -> u64 {
+        fn weight(&self) -> u64 {
             self.tot_exec_volume()
         }
         fn epoch_time(&self) -> u128 {
@@ -110,13 +110,13 @@ mod tests {
     fn test_moving_average() {
         let now = Time::now().unwrap();
         let data = vec![
-            ExecData::new(1100.0, 1, now - Time::from_days(7)),
-            ExecData::new(1000.0, 2, now - Time::from_days(6)),
-            ExecData::new(1200.0, 1, now - Time::from_days(5)),
-            ExecData::new(1150.0, 3, now - Time::from_days(4)),
-            ExecData::new(1200.0, 4, now - Time::from_days(3)),
-            ExecData::new(1000.0, 1, now - Time::from_days(2)),
-            ExecData::new(900.0, 1, now - Time::from_days(0)),
+            RawBaseData::new(1100.0, 1, now - Time::from_days(7)),
+            RawBaseData::new(1000.0, 2, now - Time::from_days(6)),
+            RawBaseData::new(1200.0, 1, now - Time::from_days(5)),
+            RawBaseData::new(1150.0, 3, now - Time::from_days(4)),
+            RawBaseData::new(1200.0, 4, now - Time::from_days(3)),
+            RawBaseData::new(1000.0, 1, now - Time::from_days(2)),
+            RawBaseData::new(900.0, 1, now - Time::from_days(0)),
         ];
         assert!((MovingAverage::simple(&data).inner() - 1078.5714285714287).abs() < MAX_ERR);
         assert!((MovingAverage::exponential(&data).inner() - 1057.1428571428573).abs() < MAX_ERR);
@@ -204,36 +204,36 @@ mod tests {
     fn test_moving_average_convergence_divergence() {
         let now = Time::now().unwrap();
         let data = vec![
-            ExecData::new(2000.0, 1, now - Time::from_days(30)),
-            ExecData::new(1900.0, 1, now - Time::from_days(29)),
-            ExecData::new(1950.0, 1, now - Time::from_days(28)),
-            ExecData::new(1850.0, 1, now - Time::from_days(27)),
-            ExecData::new(1750.0, 1, now - Time::from_days(26)),
-            ExecData::new(1700.0, 1, now - Time::from_days(25)),
-            ExecData::new(1600.0, 1, now - Time::from_days(24)),
-            ExecData::new(1800.0, 1, now - Time::from_days(23)),
-            ExecData::new(1750.0, 1, now - Time::from_days(22)),
-            ExecData::new(1500.0, 1, now - Time::from_days(21)),
-            ExecData::new(1300.0, 1, now - Time::from_days(20)),
-            ExecData::new(1250.0, 1, now - Time::from_days(19)),
-            ExecData::new(1300.0, 1, now - Time::from_days(18)),
-            ExecData::new(1350.0, 1, now - Time::from_days(17)),
-            ExecData::new(1200.0, 1, now - Time::from_days(16)),
-            ExecData::new(1300.0, 1, now - Time::from_days(15)),
-            ExecData::new(1100.0, 1, now - Time::from_days(14)),
-            ExecData::new(950.0, 1, now - Time::from_days(13)),
-            ExecData::new(900.0, 1, now - Time::from_days(12)),
-            ExecData::new(1000.0, 1, now - Time::from_days(11)),
-            ExecData::new(1150.0, 1, now - Time::from_days(10)),
-            ExecData::new(1100.0, 1, now - Time::from_days(9)),
-            ExecData::new(1000.0, 1, now - Time::from_days(8)),
-            ExecData::new(1100.0, 1, now - Time::from_days(7)),
-            ExecData::new(1000.0, 2, now - Time::from_days(6)),
-            ExecData::new(1200.0, 1, now - Time::from_days(5)),
-            ExecData::new(1150.0, 3, now - Time::from_days(4)),
-            ExecData::new(1200.0, 4, now - Time::from_days(3)),
-            ExecData::new(1000.0, 1, now - Time::from_days(2)),
-            ExecData::new(900.0, 1, now - Time::from_days(0)),
+            RawBaseData::new(2000.0, 1, now - Time::from_days(30)),
+            RawBaseData::new(1900.0, 1, now - Time::from_days(29)),
+            RawBaseData::new(1950.0, 1, now - Time::from_days(28)),
+            RawBaseData::new(1850.0, 1, now - Time::from_days(27)),
+            RawBaseData::new(1750.0, 1, now - Time::from_days(26)),
+            RawBaseData::new(1700.0, 1, now - Time::from_days(25)),
+            RawBaseData::new(1600.0, 1, now - Time::from_days(24)),
+            RawBaseData::new(1800.0, 1, now - Time::from_days(23)),
+            RawBaseData::new(1750.0, 1, now - Time::from_days(22)),
+            RawBaseData::new(1500.0, 1, now - Time::from_days(21)),
+            RawBaseData::new(1300.0, 1, now - Time::from_days(20)),
+            RawBaseData::new(1250.0, 1, now - Time::from_days(19)),
+            RawBaseData::new(1300.0, 1, now - Time::from_days(18)),
+            RawBaseData::new(1350.0, 1, now - Time::from_days(17)),
+            RawBaseData::new(1200.0, 1, now - Time::from_days(16)),
+            RawBaseData::new(1300.0, 1, now - Time::from_days(15)),
+            RawBaseData::new(1100.0, 1, now - Time::from_days(14)),
+            RawBaseData::new(950.0, 1, now - Time::from_days(13)),
+            RawBaseData::new(900.0, 1, now - Time::from_days(12)),
+            RawBaseData::new(1000.0, 1, now - Time::from_days(11)),
+            RawBaseData::new(1150.0, 1, now - Time::from_days(10)),
+            RawBaseData::new(1100.0, 1, now - Time::from_days(9)),
+            RawBaseData::new(1000.0, 1, now - Time::from_days(8)),
+            RawBaseData::new(1100.0, 1, now - Time::from_days(7)),
+            RawBaseData::new(1000.0, 2, now - Time::from_days(6)),
+            RawBaseData::new(1200.0, 1, now - Time::from_days(5)),
+            RawBaseData::new(1150.0, 3, now - Time::from_days(4)),
+            RawBaseData::new(1200.0, 4, now - Time::from_days(3)),
+            RawBaseData::new(1000.0, 1, now - Time::from_days(2)),
+            RawBaseData::new(900.0, 1, now - Time::from_days(0)),
         ];
         let macd = MovingAverageConvergenceDivergence::new(&data).unwrap();
         assert!((macd.fast() - (-64.24501424501454)).abs() < MAX_ERR);
@@ -272,36 +272,36 @@ mod tests {
     fn test_elder_ray() {
         let now = Time::now().unwrap();
         let data = vec![
-            ExecData::new(2000.0, 1, now - Time::from_days(30)),
-            ExecData::new(1900.0, 1, now - Time::from_days(29)),
-            ExecData::new(1950.0, 1, now - Time::from_days(28)),
-            ExecData::new(1850.0, 1, now - Time::from_days(27)),
-            ExecData::new(1750.0, 1, now - Time::from_days(26)),
-            ExecData::new(1700.0, 1, now - Time::from_days(25)),
-            ExecData::new(1600.0, 1, now - Time::from_days(24)),
-            ExecData::new(1800.0, 1, now - Time::from_days(23)),
-            ExecData::new(1750.0, 1, now - Time::from_days(22)),
-            ExecData::new(1500.0, 1, now - Time::from_days(21)),
-            ExecData::new(1300.0, 1, now - Time::from_days(20)),
-            ExecData::new(1250.0, 1, now - Time::from_days(19)),
-            ExecData::new(1300.0, 1, now - Time::from_days(18)),
-            ExecData::new(1350.0, 1, now - Time::from_days(17)),
-            ExecData::new(1200.0, 1, now - Time::from_days(16)),
-            ExecData::new(1300.0, 1, now - Time::from_days(15)),
-            ExecData::new(1100.0, 1, now - Time::from_days(14)),
-            ExecData::new(950.0, 1, now - Time::from_days(13)),
-            ExecData::new(900.0, 1, now - Time::from_days(12)),
-            ExecData::new(1000.0, 1, now - Time::from_days(11)),
-            ExecData::new(1150.0, 1, now - Time::from_days(10)),
-            ExecData::new(1100.0, 1, now - Time::from_days(9)),
-            ExecData::new(1000.0, 1, now - Time::from_days(8)),
-            ExecData::new(1100.0, 1, now - Time::from_days(7)),
-            ExecData::new(1000.0, 2, now - Time::from_days(6)),
-            ExecData::new(1200.0, 1, now - Time::from_days(5)),
-            ExecData::new(1150.0, 3, now - Time::from_days(4)),
-            ExecData::new(1200.0, 4, now - Time::from_days(3)),
-            ExecData::new(1000.0, 1, now - Time::from_days(2)),
-            ExecData::new(900.0, 1, now - Time::from_days(0)),
+            RawBaseData::new(2000.0, 1, now - Time::from_days(30)),
+            RawBaseData::new(1900.0, 1, now - Time::from_days(29)),
+            RawBaseData::new(1950.0, 1, now - Time::from_days(28)),
+            RawBaseData::new(1850.0, 1, now - Time::from_days(27)),
+            RawBaseData::new(1750.0, 1, now - Time::from_days(26)),
+            RawBaseData::new(1700.0, 1, now - Time::from_days(25)),
+            RawBaseData::new(1600.0, 1, now - Time::from_days(24)),
+            RawBaseData::new(1800.0, 1, now - Time::from_days(23)),
+            RawBaseData::new(1750.0, 1, now - Time::from_days(22)),
+            RawBaseData::new(1500.0, 1, now - Time::from_days(21)),
+            RawBaseData::new(1300.0, 1, now - Time::from_days(20)),
+            RawBaseData::new(1250.0, 1, now - Time::from_days(19)),
+            RawBaseData::new(1300.0, 1, now - Time::from_days(18)),
+            RawBaseData::new(1350.0, 1, now - Time::from_days(17)),
+            RawBaseData::new(1200.0, 1, now - Time::from_days(16)),
+            RawBaseData::new(1300.0, 1, now - Time::from_days(15)),
+            RawBaseData::new(1100.0, 1, now - Time::from_days(14)),
+            RawBaseData::new(950.0, 1, now - Time::from_days(13)),
+            RawBaseData::new(900.0, 1, now - Time::from_days(12)),
+            RawBaseData::new(1000.0, 1, now - Time::from_days(11)),
+            RawBaseData::new(1150.0, 1, now - Time::from_days(10)),
+            RawBaseData::new(1100.0, 1, now - Time::from_days(9)),
+            RawBaseData::new(1000.0, 1, now - Time::from_days(8)),
+            RawBaseData::new(1100.0, 1, now - Time::from_days(7)),
+            RawBaseData::new(1000.0, 2, now - Time::from_days(6)),
+            RawBaseData::new(1200.0, 1, now - Time::from_days(5)),
+            RawBaseData::new(1150.0, 3, now - Time::from_days(4)),
+            RawBaseData::new(1200.0, 4, now - Time::from_days(3)),
+            RawBaseData::new(1000.0, 1, now - Time::from_days(2)),
+            RawBaseData::new(900.0, 1, now - Time::from_days(0)),
         ];
         let elder_ray = ElderRay::new(&data).unwrap();
         assert!((elder_ray.ask_force() - (-273.6559139784947)).abs() < MAX_ERR);

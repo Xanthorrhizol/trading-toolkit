@@ -1,5 +1,5 @@
 use super::MovingAverage;
-use crate::types::{data::Exec, error::ToolkitError};
+use crate::types::{data::BaseData, error::ToolkitError};
 
 #[derive(Debug)]
 pub struct MovingAverageConvergenceDivergence {
@@ -11,7 +11,7 @@ pub struct MovingAverageConvergenceDivergence {
 impl MovingAverageConvergenceDivergence {
     pub fn new<T>(data: &Vec<T>) -> Result<Self, ToolkitError>
     where
-        T: Exec + Clone,
+        T: BaseData + Clone,
     {
         if data.len() < 26 {
             return Err(ToolkitError::DataNotEnough);

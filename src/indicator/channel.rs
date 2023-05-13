@@ -1,6 +1,6 @@
 use super::MovingAverage;
 use crate::types::{
-    data::{Exec, Stock},
+    data::{BaseData, Stock},
     error::ToolkitError,
 };
 
@@ -25,7 +25,7 @@ impl Channel {
     }
     pub fn envelope<T>(data: &Vec<T>, coefficient: f64) -> Self
     where
-        T: Exec + Clone,
+        T: BaseData + Clone,
     {
         let ema = MovingAverage::exponential(&data).inner();
         Self::Envelope(Band {
