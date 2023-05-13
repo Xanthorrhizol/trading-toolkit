@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::indicator::{
-        Channel, ForceIndex, MovingAverage, MovingAverageConvergenceDivergence,
+        Channel, ElderRay, ForceIndex, MovingAverage, MovingAverageConvergenceDivergence,
     };
     use crate::types::{
         data::{Exec, Stock},
@@ -265,5 +265,45 @@ mod tests {
         ];
         let force_index = ForceIndex::new(&data[0], &data[1]);
         assert_eq!(50000f64, force_index.inner());
+    }
+
+    #[test]
+    fn test_elder_ray() {
+        let now = Time::now().unwrap();
+        let data = vec![
+            ExecData::new(2000.0, 1, now - Time::from_days(30)),
+            ExecData::new(1900.0, 1, now - Time::from_days(29)),
+            ExecData::new(1950.0, 1, now - Time::from_days(28)),
+            ExecData::new(1850.0, 1, now - Time::from_days(27)),
+            ExecData::new(1750.0, 1, now - Time::from_days(26)),
+            ExecData::new(1700.0, 1, now - Time::from_days(25)),
+            ExecData::new(1600.0, 1, now - Time::from_days(24)),
+            ExecData::new(1800.0, 1, now - Time::from_days(23)),
+            ExecData::new(1750.0, 1, now - Time::from_days(22)),
+            ExecData::new(1500.0, 1, now - Time::from_days(21)),
+            ExecData::new(1300.0, 1, now - Time::from_days(20)),
+            ExecData::new(1250.0, 1, now - Time::from_days(19)),
+            ExecData::new(1300.0, 1, now - Time::from_days(18)),
+            ExecData::new(1350.0, 1, now - Time::from_days(17)),
+            ExecData::new(1200.0, 1, now - Time::from_days(16)),
+            ExecData::new(1300.0, 1, now - Time::from_days(15)),
+            ExecData::new(1100.0, 1, now - Time::from_days(14)),
+            ExecData::new(950.0, 1, now - Time::from_days(13)),
+            ExecData::new(900.0, 1, now - Time::from_days(12)),
+            ExecData::new(1000.0, 1, now - Time::from_days(11)),
+            ExecData::new(1150.0, 1, now - Time::from_days(10)),
+            ExecData::new(1100.0, 1, now - Time::from_days(9)),
+            ExecData::new(1000.0, 1, now - Time::from_days(8)),
+            ExecData::new(1100.0, 1, now - Time::from_days(7)),
+            ExecData::new(1000.0, 2, now - Time::from_days(6)),
+            ExecData::new(1200.0, 1, now - Time::from_days(5)),
+            ExecData::new(1150.0, 3, now - Time::from_days(4)),
+            ExecData::new(1200.0, 4, now - Time::from_days(3)),
+            ExecData::new(1000.0, 1, now - Time::from_days(2)),
+            ExecData::new(900.0, 1, now - Time::from_days(0)),
+        ];
+        let elder_ray = ElderRay::new(&data).unwrap();
+        assert!((elder_ray.ask_force() - (-273.6559139784947)).abs() < MAX_ERR);
+        assert!((elder_ray.bid_force() - 826.3440860215053).abs() < MAX_ERR);
     }
 }
