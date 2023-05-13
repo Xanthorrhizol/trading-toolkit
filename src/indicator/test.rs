@@ -1,8 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::indicator::{
-        oscillator::{ForceIndex, MovingAverageConvergenceDivergence},
-        trend_following::{Channel, MovingAverage},
+        Channel, ForceIndex, MovingAverage, MovingAverageConvergenceDivergence,
     };
     use crate::types::{
         data::{Exec, Stock},
@@ -66,37 +65,6 @@ mod tests {
                 tot_exec_amount,
                 tot_exec_volume,
                 epoch_time,
-            }
-        }
-
-        fn from(data: Vec<ExecData>) -> Self {
-            let mut data = data.clone();
-            data.sort_by_key(|k| k.epoch_time());
-            let open_price = data[0].price();
-            let close_price = data.last().unwrap().price();
-            let epoch_time = data.last().unwrap().epoch_time();
-            let mut high_price = data[0].price();
-            let mut low_price = data[0].price();
-            let mut tot_exec_amount = 0f64;
-            let mut tot_exec_volume = 0u64;
-            for elem in data.iter() {
-                if high_price < elem.price() {
-                    high_price = elem.price();
-                }
-                if low_price < elem.price() {
-                    low_price = elem.price();
-                }
-                tot_exec_amount += elem.price() * (elem.volume() as f64);
-                tot_exec_volume += elem.volume();
-            }
-            Self {
-                open_price,
-                high_price,
-                low_price,
-                close_price,
-                tot_exec_amount,
-                tot_exec_volume,
-                epoch_time: Time::from(epoch_time),
             }
         }
     }
