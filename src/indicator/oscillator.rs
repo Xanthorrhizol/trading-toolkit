@@ -52,6 +52,7 @@ pub struct ForceIndex {
     epoch_time: u128,
 }
 
+// make Force Index usable for MovingAverage
 impl Exec for ForceIndex {
     fn price(&self) -> f64 {
         self.inner
