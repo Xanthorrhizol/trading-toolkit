@@ -16,7 +16,9 @@ impl MovingAverageConvergenceDivergence {
         if data.len() < 26 {
             return Err(ToolkitError::DataNotEnough);
         }
-        let data = data.split_at(data.len() - 26).1;
+        let mut data = data.clone().to_vec();
+        data.sort_by_key(|k| k.epoch_time());
+        data = data.split_at(data.len() - 26).1.to_vec();
         let ema_26 = MovingAverage::exponential(&data[0..26].to_vec());
         let ema_12 = MovingAverage::exponential(&data[26 - 12..26].to_vec());
         let ema_9 = MovingAverage::exponential(&data[26 - 9..26].to_vec());
