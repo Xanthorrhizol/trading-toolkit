@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::indicator::{
-        oscillator::MovingAverageConvergenceDivergence,
+        oscillator::{ForceIndex, MovingAverageConvergenceDivergence},
         trend_following::{Channel, MovingAverage},
     };
     use crate::types::{
@@ -270,5 +270,32 @@ mod tests {
         assert!((macd.fast() - (-64.24501424501454)).abs() < MAX_ERR);
         assert!((macd.slow() - 1062.2222222222226).abs() < MAX_ERR);
         assert!((macd.macd_histogram() - (-1126.4672364672372)).abs() < MAX_ERR);
+    }
+
+    #[test]
+    fn test_force_index() {
+        let now = Time::now().unwrap();
+        let data = vec![
+            StockData::new(
+                1000.0,
+                1100.0,
+                800.0,
+                900.0,
+                900.0 * 3000.0,
+                3000,
+                now - Time::from_days(2),
+            ),
+            StockData::new(
+                900.0,
+                1000.0,
+                800.0,
+                950.0,
+                900.0 * 1000.0,
+                1000,
+                now - Time::from_days(1),
+            ),
+        ];
+        let force_index = ForceIndex::new(&data[0], &data[1]);
+        assert_eq!(50000f64, force_index.inner());
     }
 }
