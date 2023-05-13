@@ -2,6 +2,7 @@
 mod tests {
     use crate::indicator::{
         Channel, ElderRay, ForceIndex, MovingAverage, MovingAverageConvergenceDivergence,
+        Stochastic,
     };
     use crate::types::{
         data::{Exec, Stock},
@@ -305,5 +306,91 @@ mod tests {
         let elder_ray = ElderRay::new(&data).unwrap();
         assert!((elder_ray.ask_force() - (-273.6559139784947)).abs() < MAX_ERR);
         assert!((elder_ray.bid_force() - 826.3440860215053).abs() < MAX_ERR);
+    }
+
+    #[test]
+    fn test_stochastic() {
+        let now = Time::now().unwrap();
+        let data = vec![
+            StockData::new(
+                1200.0,
+                1200.0,
+                1000.0,
+                1100.0,
+                1050.0 * 1000.0,
+                1000,
+                now - Time::from_days(7),
+            ),
+            StockData::new(
+                1000.0,
+                1200.0,
+                950.0,
+                1200.0,
+                1100.0 * 2000.0,
+                2000,
+                now - Time::from_days(6),
+            ),
+            StockData::new(
+                1200.0,
+                1300.0,
+                1100.0,
+                1150.0,
+                1200.0 * 2500.0,
+                2500,
+                now - Time::from_days(5),
+            ),
+            StockData::new(
+                1150.0,
+                1200.0,
+                1000.0,
+                1200.0,
+                1150.0 * 2000.0,
+                2000,
+                now - Time::from_days(4),
+            ),
+            StockData::new(
+                1200.0,
+                1200.0,
+                1000.0,
+                1000.0,
+                1050.0 * 2000.0,
+                2000,
+                now - Time::from_days(3),
+            ),
+            StockData::new(
+                1000.0,
+                1100.0,
+                800.0,
+                900.0,
+                900.0 * 3000.0,
+                3000,
+                now - Time::from_days(2),
+            ),
+            StockData::new(
+                900.0,
+                1000.0,
+                800.0,
+                950.0,
+                900.0 * 1000.0,
+                1000,
+                now - Time::from_days(1),
+            ),
+        ];
+        let fast_stochastics = vec![
+            Stochastic::fast(&data[0..3].to_vec()).unwrap(),
+            Stochastic::fast(&data[3..6].to_vec()).unwrap(),
+        ];
+        assert!((fast_stochastics.first().unwrap().inner() - 57.14285714285714).abs() < MAX_ERR);
+        assert!((fast_stochastics.last().unwrap().inner() - 25f64).abs() < MAX_ERR);
+        let slow_stochastics = vec![
+            Stochastic::fast(&data[0..3].to_vec()).unwrap(),
+            Stochastic::fast(&data[3..6].to_vec()).unwrap(),
+        ];
+        assert!((slow_stochastics.first().unwrap().inner() - 57.14285714285714).abs() < MAX_ERR);
+        assert!((slow_stochastics.last().unwrap().inner() - 25f64).abs() < MAX_ERR);
+        assert!(
+            (Stochastic::into_slow(&fast_stochastics).unwrap().inner() - 41.07142857142857).abs()
+                < MAX_ERR,
+        );
     }
 }

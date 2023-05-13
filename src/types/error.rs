@@ -6,4 +6,6 @@ pub enum ToolkitError {
     EmptyData,
     #[error("Data not enough")]
     DataNotEnough,
+    #[error("Data invalid")]
+    InvalidData,
 }
