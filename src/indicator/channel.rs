@@ -49,13 +49,13 @@ impl Channel {
         exponential: bool,
     ) -> Result<Self, ToolkitError>
     where
-        T: Stock + Clone,
+        T: Stock + BaseData + Clone,
     {
         if data.len() == 0 {
             return Err(ToolkitError::EmptyData);
         }
         let mut data = data.clone().to_owned();
-        data.sort_by_key(|k| k.epoch_time());
+        data.sort_by_key(|k| Stock::epoch_time(k));
         let mut sum = 0f64;
         let mut variation = 0f64;
 
@@ -70,20 +70,7 @@ impl Channel {
         let stdev = variation.sqrt();
 
         let mid = if exponential {
-            // calculate EMA
-            let mut first = true;
-            let mut result = 0f64;
-            let mut i = 1f64;
-            for curr in data.iter() {
-                let k = 2f64 / (i + 1f64);
-                if first {
-                    result = curr.close_price();
-                    first = false;
-                }
-                result = curr.close_price() * k + result * (1f64 - k);
-                i += 1f64;
-            }
-            result
+            MovingAverage::exponential(&data).inner()
         } else {
             mean
         };
