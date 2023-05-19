@@ -22,17 +22,16 @@ impl MovingAverage {
     }
 
     /// Simple Moving Average from previous data
-    pub fn simple_from<T>(scope: usize, prev: &Self, new_data: &T) -> Self
+    pub fn simple_from<T>(scope: usize, prev: &Self, oldest_data: &T, new_data: &T) -> Self
     where
         T: BaseData,
     {
         let prev = prev.inner();
         let numerator = prev * (scope as f64);
-        Self::Simple((numerator - prev + new_data.value()) / (scope as f64))
+        Self::Simple((numerator - oldest_data.value() + new_data.value()) / (scope as f64))
     }
 
     /// Exponential Moving Average(EMA)
-    // TODO: is it really right?
     pub fn exponential<T>(data: &Vec<T>) -> Self
     where
         T: BaseData + Clone,
@@ -55,7 +54,6 @@ impl MovingAverage {
     }
 
     /// Exponential Moving Average(EMA)
-    // TODO: is it really right?
     pub fn exponential_from<T>(scope: usize, prev: &Self, new_data: &T) -> Self
     where
         T: BaseData + Clone,

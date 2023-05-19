@@ -116,10 +116,18 @@ mod tests {
             RawBaseData::new(1150.0, 3, now - Time::from_days(4)),
             RawBaseData::new(1200.0, 4, now - Time::from_days(3)),
             RawBaseData::new(1000.0, 1, now - Time::from_days(2)),
-            RawBaseData::new(900.0, 1, now - Time::from_days(0)),
+            RawBaseData::new(900.0, 1, now - Time::from_days(1)),
         ];
-        assert!((MovingAverage::simple(&data).inner() - 1078.5714285714287).abs() < MAX_ERR);
+        let sma = MovingAverage::simple(&data);
+        assert!((sma.inner() - 1078.5714285714287).abs() < MAX_ERR);
         assert!((MovingAverage::exponential(&data).inner() - 1057.1428571428573).abs() < MAX_ERR);
+        assert!(
+            (MovingAverage::simple_from(7, &sma, &data[0], &RawBaseData::new(900.0, 1, now))
+                .inner()
+                - 1050.0000000000002)
+                .abs()
+                < MAX_ERR
+        );
     }
 
     #[test]
