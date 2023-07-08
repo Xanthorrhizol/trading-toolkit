@@ -25,12 +25,18 @@ static DAY_IN_MILLISEC: u128 = 24 * HOUR_IN_MILLISEC;
 /// let days_in_time = Time::from_days(days);
 /// assert_eq!(days_in_time.inner(), (days as u128) * 24 * 60 * 60 * 1000 as u128);
 /// ```
-#[derive(Eq, Clone, Ord, PartialOrd)]
+#[derive(Debug, Eq, Clone, Ord, PartialOrd)]
 pub struct Time(u128);
 
 impl From<u128> for Time {
     fn from(epoch: u128) -> Self {
         Self(epoch)
+    }
+}
+
+impl<'a> std::fmt::Display for Time {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.inner())
     }
 }
 
