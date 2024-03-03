@@ -1,7 +1,7 @@
 use super::MovingAverage;
 use crate::types::{data::BaseData, error::ToolkitError};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct ElderRay {
     /// seller's force
     ask_force: f64,

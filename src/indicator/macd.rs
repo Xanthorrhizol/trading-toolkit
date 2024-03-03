@@ -1,7 +1,7 @@
 use super::MovingAverage;
 use crate::types::{data::BaseData, error::ToolkitError};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct MovingAverageConvergenceDivergence {
     ema_9: f64,
     ema_12: f64,

@@ -4,13 +4,13 @@ use crate::types::{
     error::ToolkitError,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum Channel {
     Envelope(Band),
     Bollinger(Band),
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct Band {
     pub upper: f64,
     pub mid: f64,

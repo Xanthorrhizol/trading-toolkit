@@ -1,6 +1,6 @@
 use crate::types::data::BaseData;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum MovingAverage {
     Simple(f64),
     Exponential(f64),

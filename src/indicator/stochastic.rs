@@ -4,7 +4,7 @@ use crate::types::{
     error::ToolkitError,
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum Stochastic {
     Fast(f64, u128),
     Slow(f64, u128),

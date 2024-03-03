@@ -1,6 +1,6 @@
 use crate::types::data::{BaseData, Stock};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct ForceIndex {
     inner: f64,
     epoch_time: u128,
