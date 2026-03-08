@@ -212,6 +212,9 @@ mod tests {
     fn test_moving_average_convergence_divergence() {
         let now = Time::now().unwrap();
         let data = vec![
+            RawBaseData::new(2000.0, 1, now - Time::from_days(33)),
+            RawBaseData::new(2200.0, 1, now - Time::from_days(32)),
+            RawBaseData::new(2000.0, 1, now - Time::from_days(31)),
             RawBaseData::new(2000.0, 1, now - Time::from_days(30)),
             RawBaseData::new(1900.0, 1, now - Time::from_days(29)),
             RawBaseData::new(1950.0, 1, now - Time::from_days(28)),
@@ -241,12 +244,13 @@ mod tests {
             RawBaseData::new(1150.0, 3, now - Time::from_days(4)),
             RawBaseData::new(1200.0, 4, now - Time::from_days(3)),
             RawBaseData::new(1000.0, 1, now - Time::from_days(2)),
+            RawBaseData::new(1000.0, 1, now - Time::from_days(1)),
             RawBaseData::new(900.0, 1, now - Time::from_days(0)),
         ];
         let macd = MovingAverageConvergenceDivergence::new(&data).unwrap();
-        assert!((macd.fast() - (-64.24501424501454)).abs() < MAX_ERR);
-        assert!((macd.slow() - 1062.2222222222226).abs() < MAX_ERR);
-        assert!((macd.macd_histogram() - (-1126.4672364672372)).abs() < MAX_ERR);
+        assert!((macd.fast() - (-89.40857762786618)).abs() < MAX_ERR);
+        assert!((macd.slow() - (-130.0014980518957)).abs() < MAX_ERR);
+        assert!((macd.macd_histogram() - 40.59292042402953).abs() < MAX_ERR);
     }
 
     #[test]
