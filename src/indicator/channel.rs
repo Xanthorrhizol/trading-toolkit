@@ -60,14 +60,13 @@ impl Channel {
         let mut variation = 0f64;
 
         for elem in data.iter() {
-            sum += (elem.open_price() + elem.high_price() + elem.low_price()) / 3f64;
+            sum += elem.close_price();
         }
         let mean = sum / (data.len() as f64);
         for elem in data.iter() {
-            variation +=
-                (mean - (elem.open_price() + elem.high_price() + elem.low_price()) / 3f64).powi(2);
+            variation += (mean - elem.close_price()).powi(2);
         }
-        let stdev = variation.sqrt();
+        let stdev = (variation / data.len() as f64).sqrt();
 
         let mid = if exponential {
             MovingAverage::exponential(&data).inner()

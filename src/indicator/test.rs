@@ -200,12 +200,12 @@ mod tests {
         ];
         let envelope_band = Channel::envelope(&data, 0.1f64).inner();
         let bollinger_band = Channel::bollinger(&data, 2f64, true).unwrap().inner();
-        assert!((envelope_band.upper - 1131.4285714285716).abs() < MAX_ERR);
-        assert!((envelope_band.mid - 1028.5714285714287).abs() < MAX_ERR);
-        assert!((envelope_band.lower - 925.7142857142858).abs() < MAX_ERR);
-        assert!((bollinger_band.upper - 1546.503825949666).abs() < MAX_ERR);
-        assert!((bollinger_band.mid - 1028.5714285714287).abs() < MAX_ERR);
-        assert!((bollinger_band.lower - 510.6390311931914).abs() < MAX_ERR);
+        assert!((envelope_band.upper - 1130.3140694754463).abs() < MAX_ERR);
+        assert!((envelope_band.mid - 1027.5582449776784).abs() < MAX_ERR);
+        assert!((envelope_band.lower - 924.8024204799107).abs() < MAX_ERR);
+        assert!((bollinger_band.upper - 1223.3182906071495).abs() < MAX_ERR);
+        assert!((bollinger_band.mid - 1027.5582449776784).abs() < MAX_ERR);
+        assert!((bollinger_band.lower - 831.7981993482074).abs() < MAX_ERR);
     }
 
     #[test]
