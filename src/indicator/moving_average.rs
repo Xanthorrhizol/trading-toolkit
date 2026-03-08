@@ -38,17 +38,14 @@ impl MovingAverage {
     {
         let mut data = data.clone().to_vec();
         data.sort_by_key(|k| k.epoch_time());
-        let mut first = true;
-        let mut result = 0f64;
-        let mut i = 1f64;
+        let len = data.len() as f64;
+        let k = 2f64 / (len as f64 + 1f64);
+
+        let seed = data.iter().map(|d| d.value()).sum::<f64>() / len as f64;
+        let mut result = seed;
+
         for curr in data.iter() {
-            let k = 2f64 / (i + 1f64);
-            if first {
-                result = curr.value();
-                first = false;
-            }
             result = curr.value() * k + result * (1f64 - k);
-            i += 1f64;
         }
         Self::Exponential(result)
     }
