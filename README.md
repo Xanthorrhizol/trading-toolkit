@@ -1,7 +1,5 @@
 # trading-toolkit
 
-A lightweight Rust toolkit for technical analysis on trading data.
-
 This crate provides a small set of reusable indicator implementations and core data traits so you can plug in your own candle / OHLCV types without being forced into a specific data model.
 
 ## Features
