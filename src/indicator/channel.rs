@@ -1,6 +1,6 @@
 use super::MovingAverage;
 use crate::types::{
-    data::{BaseData, Stock},
+    data::{BaseData, Candle},
     error::ToolkitError,
 };
 
@@ -49,13 +49,13 @@ impl Channel {
         exponential: bool,
     ) -> Result<Self, ToolkitError>
     where
-        T: Stock + BaseData + Clone,
+        T: Candle + BaseData + Clone,
     {
         if data.len() == 0 {
             return Err(ToolkitError::EmptyData);
         }
         let mut data = data.clone().to_owned();
-        data.sort_by_key(|k| Stock::epoch_time(k));
+        data.sort_by_key(|k| Candle::epoch_time(k));
         let mut sum = 0f64;
         let mut variation = 0f64;
 

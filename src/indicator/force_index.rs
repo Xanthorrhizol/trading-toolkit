@@ -1,4 +1,4 @@
-use crate::types::data::{BaseData, Stock};
+use crate::types::data::{BaseData, Candle};
 
 #[derive(Debug, Clone, Copy)]
 pub struct ForceIndex {
@@ -24,7 +24,7 @@ impl BaseData for ForceIndex {
 impl ForceIndex {
     pub fn new<T>(prev: &T, curr: &T) -> Self
     where
-        T: Stock,
+        T: Candle,
     {
         Self {
             inner: (curr.close_price() - prev.close_price()) * (curr.tot_exec_volume() as f64),

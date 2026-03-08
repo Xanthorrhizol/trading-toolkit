@@ -6,7 +6,7 @@ This crate provides a small set of reusable indicator implementations and core d
 
 - Generic traits for market data
   - `BaseData`
-  - `Stock`
+  - `Candle`
 - Core utility types
   - `Time`
   - `ToolkitError`
@@ -51,30 +51,30 @@ pub trait BaseData {
 
 Use this when your indicator only needs a value stream and timestamps.
 
-### `Stock`
+### `Candle`
 
-A richer trait for OHLCV-like market data.
+A richer trait for OHLCV market data.
 
 ```rust
-pub trait Stock {
+pub trait Candle {
     fn open_price(&self) -> f64;
     fn high_price(&self) -> f64;
     fn low_price(&self) -> f64;
     fn close_price(&self) -> f64;
-    fn tot_exec_amount(&self) -> f64;
     fn tot_exec_volume(&self) -> u64;
     fn epoch_time(&self) -> u128;
 }
 ```
 
-Use this when your indicator depends on candle structure such as high/low/close/volume.
+Use this when your indicator depends on candle structure such as high/low/open/close/volume.
+If you implement `Candle`, the `BaseData` is automatically implemented.
 
 ## Quick Start
 
-Define your own candle type and implement `BaseData` and `Stock` for it.
+Define your own candle type and implement `BaseData` and `Candle` for it.
 
 ```rust
-use trading_toolkit::types::data::Stock;
+use trading_toolkit::types::data::Candle;
 use trading_toolkit::types::data::BaseData;
 
 #[derive(Debug, Clone)]
@@ -88,13 +88,7 @@ struct Candle {
     epoch_time: u128,
 }
 
-impl BaseData for Candle {
-    fn value(&self) -> f64 { self.close }
-    fn weight(&self) -> u64 { 1 }
-    fn epoch_time(&self) -> u128 { self.epoch_time }
-}
-
-impl Stock for Candle {
+impl Candel for Candle {
     fn open_price(&self) -> f64 { self.open }
     fn high_price(&self) -> f64 { self.high }
     fn low_price(&self) -> f64 { self.low }

@@ -1,6 +1,6 @@
 use super::MovingAverage;
 use crate::types::{
-    data::{BaseData, Stock},
+    data::{BaseData, Candle},
     error::ToolkitError,
 };
 
@@ -15,13 +15,13 @@ pub struct ElderRay {
 impl ElderRay {
     pub fn new<T>(data: &Vec<T>) -> Result<Self, ToolkitError>
     where
-        T: Stock + BaseData + Clone,
+        T: Candle + BaseData + Clone,
     {
         if data.len() == 0 {
             return Err(ToolkitError::EmptyData);
         }
         let mut sorted = data.clone();
-        sorted.sort_by_key(|k| Stock::epoch_time(k));
+        sorted.sort_by_key(|k| Candle::epoch_time(k));
 
         let ema = MovingAverage::exponential(data).inner();
         let last = sorted.last().ok_or(ToolkitError::EmptyData)?;

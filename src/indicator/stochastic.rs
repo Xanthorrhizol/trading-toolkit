@@ -1,6 +1,6 @@
 use super::MovingAverage;
 use crate::types::{
-    data::{BaseData, Stock},
+    data::{BaseData, Candle},
     error::ToolkitError,
 };
 
@@ -13,7 +13,7 @@ pub enum Stochastic {
 impl Stochastic {
     pub fn fast<T>(data: &Vec<T>) -> Result<Self, ToolkitError>
     where
-        T: Stock + Clone,
+        T: Candle + Clone,
     {
         if data.len() == 0 {
             return Err(ToolkitError::EmptyData);
@@ -36,7 +36,7 @@ impl Stochastic {
 
     pub fn slow<T>(data: &Vec<T>) -> Result<Self, ToolkitError>
     where
-        T: Stock + Clone,
+        T: Candle + Clone,
     {
         if data.len() == 0 {
             return Err(ToolkitError::EmptyData);
