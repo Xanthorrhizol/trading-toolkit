@@ -1,5 +1,8 @@
 use super::MovingAverage;
-use crate::types::{data::BaseData, error::ToolkitError};
+use crate::types::{
+    data::{BaseData, Stock},
+    error::ToolkitError,
+};
 
 #[derive(Debug, Clone, Copy)]
 pub struct ElderRay {
@@ -12,22 +15,20 @@ pub struct ElderRay {
 impl ElderRay {
     pub fn new<T>(data: &Vec<T>) -> Result<Self, ToolkitError>
     where
-        T: BaseData + Clone,
+        T: Stock + BaseData + Clone,
     {
         if data.len() == 0 {
             return Err(ToolkitError::EmptyData);
         }
-        let mut high_price = 0f64;
-        let mut low_price = std::f64::MAX;
+        let mut sorted = data.clone();
+        sorted.sort_by_key(|k| Stock::epoch_time(k));
+
         let ema = MovingAverage::exponential(data).inner();
-        for elem in data.iter() {
-            high_price = high_price.max(elem.value());
-            low_price = low_price.min(elem.value());
-        }
+        let last = sorted.last().ok_or(ToolkitError::EmptyData)?;
 
         Ok(Self {
-            ask_force: low_price - ema,
-            bid_force: high_price - ema,
+            ask_force: last.low_price() - ema,
+            bid_force: last.high_price() - ema,
         })
     }
 
