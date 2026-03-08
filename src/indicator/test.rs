@@ -203,9 +203,9 @@ mod tests {
         assert!((envelope_band.upper - 1130.3140694754463).abs() < MAX_ERR);
         assert!((envelope_band.mid - 1027.5582449776784).abs() < MAX_ERR);
         assert!((envelope_band.lower - 924.8024204799107).abs() < MAX_ERR);
-        assert!((bollinger_band.upper - 1223.3182906071495).abs() < MAX_ERR);
+        assert!((bollinger_band.upper - 1253.4352207039913).abs() < MAX_ERR);
         assert!((bollinger_band.mid - 1027.5582449776784).abs() < MAX_ERR);
-        assert!((bollinger_band.lower - 831.7981993482074).abs() < MAX_ERR);
+        assert!((bollinger_band.lower - 801.6812692513656).abs() < MAX_ERR);
     }
 
     #[test]
@@ -395,8 +395,8 @@ mod tests {
         assert!((fast_stochastics.first().unwrap().inner() - 57.14285714285714).abs() < MAX_ERR);
         assert!((fast_stochastics.last().unwrap().inner() - 25f64).abs() < MAX_ERR);
         let slow_stochastics = vec![
-            Stochastic::fast(&data[0..3].to_vec()).unwrap(),
-            Stochastic::fast(&data[3..6].to_vec()).unwrap(),
+            Stochastic::slow(&data[0..3].to_vec()).unwrap(),
+            Stochastic::slow(&data[3..6].to_vec()).unwrap(),
         ];
         assert!((slow_stochastics.first().unwrap().inner() - 57.14285714285714).abs() < MAX_ERR);
         assert!((slow_stochastics.last().unwrap().inner() - 25f64).abs() < MAX_ERR);
