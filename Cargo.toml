@@ -1,10 +1,15 @@
 [package]
 name = "trading-toolkit"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 authors = ["Xanthorrhizol <xanthorrhizol@proton.me>"]
+description = "Trading Toolkit"
+repository = "https://github.com/Xanthorrhizol/trading-toolkit"
+readme = "README.md"
+license = "MIT"
+keywords = ["trading", "indicator"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-thiserror = "1.0.40"
+thiserror = "2.0.18"
