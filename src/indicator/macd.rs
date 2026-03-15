@@ -9,14 +9,14 @@ pub struct MovingAverageConvergenceDivergence {
 }
 
 impl MovingAverageConvergenceDivergence {
-    pub fn new<T>(data: &Vec<T>) -> Result<Self, ToolkitError>
+    pub fn new<T>(data: &[T]) -> Result<Self, ToolkitError>
     where
         T: BaseData + Clone,
     {
         if data.len() < 34 {
             return Err(ToolkitError::DataNotEnough);
         }
-        let mut data = data.clone().to_vec();
+        let mut data = data.to_vec();
         data.sort_by_key(|k| k.epoch_time());
         data = data.split_at(data.len() - 34).1.to_vec();
         let n = data.len();

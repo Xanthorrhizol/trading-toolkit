@@ -11,14 +11,14 @@ pub enum Stochastic {
 }
 
 impl Stochastic {
-    pub fn fast<T>(data: &Vec<T>) -> Result<Self, ToolkitError>
+    pub fn fast<T>(data: &[T]) -> Result<Self, ToolkitError>
     where
         T: Candle + Clone,
     {
         if data.len() == 0 {
             return Err(ToolkitError::EmptyData);
         }
-        let mut data = data.clone().to_vec();
+        let mut data = data.to_vec();
         data.sort_by_key(|k| k.epoch_time());
         let last_close_price = data.last().unwrap().close_price(); // it's safe since the vector's length > 0
         let mut max_high_price = 0f64;
@@ -34,14 +34,14 @@ impl Stochastic {
         ))
     }
 
-    pub fn slow<T>(data: &Vec<T>) -> Result<Self, ToolkitError>
+    pub fn slow<T>(data: &[T]) -> Result<Self, ToolkitError>
     where
         T: Candle + Clone,
     {
         if data.len() == 0 {
             return Err(ToolkitError::EmptyData);
         }
-        let mut data = data.clone().to_vec();
+        let mut data = data.to_vec();
         data.sort_by_key(|k| k.epoch_time());
         let mut sum_numerator = 0f64;
         let mut sum_denominator = 0f64;
@@ -62,7 +62,7 @@ impl Stochastic {
         }
     }
 
-    pub fn into_slow(data: &Vec<Self>) -> Result<Self, ToolkitError> {
+    pub fn into_slow(data: &[Self]) -> Result<Self, ToolkitError> {
         if data
             .iter()
             .filter(|elem| match elem {
@@ -74,7 +74,7 @@ impl Stochastic {
         {
             return Err(ToolkitError::InvalidData);
         }
-        let mut data = data.clone().to_vec();
+        let mut data = data.to_vec();
         data.sort_by_key(|k| k.epoch_time());
         let last_epoch_time = data.last().unwrap().epoch_time(); // it's safe since the vector's length > 0
         Ok(Self::Slow(

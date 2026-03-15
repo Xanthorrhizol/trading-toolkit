@@ -8,7 +8,7 @@ pub enum MovingAverage {
 
 impl MovingAverage {
     /// Simple Moving Average
-    pub fn simple<T>(data: &Vec<T>) -> Self
+    pub fn simple<T>(data: &[T]) -> Self
     where
         T: BaseData,
     {
@@ -32,11 +32,11 @@ impl MovingAverage {
     }
 
     /// Exponential Moving Average(EMA)
-    pub fn exponential<T>(data: &Vec<T>) -> Self
+    pub fn exponential<T>(data: &[T]) -> Self
     where
         T: BaseData + Clone,
     {
-        let mut data = data.clone().to_vec();
+        let mut data = data.to_vec();
         data.sort_by_key(|k| k.epoch_time());
         let len = data.len() as f64;
         let k = 2f64 / (len as f64 + 1f64);

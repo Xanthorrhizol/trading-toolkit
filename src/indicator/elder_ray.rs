@@ -13,14 +13,14 @@ pub struct ElderRay {
 }
 
 impl ElderRay {
-    pub fn new<T>(data: &Vec<T>) -> Result<Self, ToolkitError>
+    pub fn new<T>(data: &[T]) -> Result<Self, ToolkitError>
     where
         T: Candle + BaseData + Clone,
     {
         if data.len() == 0 {
             return Err(ToolkitError::EmptyData);
         }
-        let mut sorted = data.clone();
+        let mut sorted = data.to_vec().clone();
         sorted.sort_by_key(|k| Candle::epoch_time(k));
 
         let ema = MovingAverage::exponential(data).inner();
