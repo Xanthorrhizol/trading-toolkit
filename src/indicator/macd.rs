@@ -18,21 +18,9 @@ impl MovingAverageConvergenceDivergence {
         }
         let mut data = data.to_vec();
         data.sort_by_key(|k| k.epoch_time());
-        data = data.split_at(data.len() - 34).1.to_vec();
         let n = data.len();
-        let ema_26 = MovingAverage::exponential(&data[n - 26..n].to_vec());
-        let ema_12 = MovingAverage::exponential(&data[n - 12..n].to_vec());
-        let macd_series: Vec<_> = (0..9)
-            .map(|i| {
-                let end = n - (8 - i); // 9번째 마지막이 현재 bar
-                let e26 = MovingAverage::exponential(&data[end - 26..end].to_vec()).inner();
-                let e12 = MovingAverage::exponential(&data[end - 12..end].to_vec()).inner();
-                e12 - e26
-            })
-            .collect();
 
-        // MACD 값들의 EMA_9 → Signal Line
-        // BaseData로 wrapping해서 기존 exponential 활용
+        // MACD 값을 BaseData로 wrapping하여 MovingAverage에 활용
         #[derive(Debug, Clone, Copy)]
         struct MacdPoint(f64, u128);
         impl BaseData for MacdPoint {
@@ -46,17 +34,44 @@ impl MovingAverageConvergenceDivergence {
                 self.1
             }
         }
-        let macd_data: Vec<MacdPoint> = macd_series
-            .iter()
-            .enumerate()
-            .map(|(i, v)| MacdPoint(*v, i as u128))
-            .collect();
 
-        let signal = MovingAverage::exponential(&macd_data).inner();
+        // EMA(26): 첫 26개 SMA로 seed → bar 26부터 rolling
+        let mut ema26 = MovingAverage::simple(&data[0..26]);
+        // EMA(12): 첫 12개 SMA로 seed → bar 25까지 rolling (ema26과 기준 bar 맞춤)
+        let mut ema12 = MovingAverage::simple(&data[0..12]);
+        for i in 12..26 {
+            ema12 = MovingAverage::exponential_from(12, &ema12, &data[i]);
+        }
+
+        // bar 25 기준 첫 번째 MACD 값
+        let mut macd_for_seed = vec![MacdPoint(
+            ema12.inner() - ema26.inner(),
+            data[25].epoch_time(),
+        )];
+
+        // bars 26..33: MACD seed용 9개 수집 (총 9개)
+        for i in 26..34 {
+            ema12 = MovingAverage::exponential_from(12, &ema12, &data[i]);
+            ema26 = MovingAverage::exponential_from(26, &ema26, &data[i]);
+            macd_for_seed.push(MacdPoint(
+                ema12.inner() - ema26.inner(),
+                data[i].epoch_time(),
+            ));
+        }
+
+        // Signal: 첫 9개 MACD의 SMA로 seed → bar 34부터 rolling EMA(9)
+        let mut signal = MovingAverage::simple(&macd_for_seed);
+        for i in 34..n {
+            ema12 = MovingAverage::exponential_from(12, &ema12, &data[i]);
+            ema26 = MovingAverage::exponential_from(26, &ema26, &data[i]);
+            let macd_point = MacdPoint(ema12.inner() - ema26.inner(), data[i].epoch_time());
+            signal = MovingAverage::exponential_from(9, &signal, &macd_point);
+        }
+
         Ok(Self {
-            signal: signal,
-            ema_12: ema_12.inner(),
-            ema_26: ema_26.inner(),
+            signal: signal.inner(),
+            ema_12: ema12.inner(),
+            ema_26: ema26.inner(),
         })
     }
 

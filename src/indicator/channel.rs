@@ -53,22 +53,22 @@ impl Channel {
         let mut data = data.to_owned();
         data.sort_by_key(|k| Candle::epoch_time(k));
         let mut sum = 0f64;
-        let mut variation = 0f64;
-
         for elem in data.iter() {
             sum += elem.close_price();
         }
         let mean = sum / (data.len() as f64);
-        for elem in data.iter() {
-            variation += (mean - elem.close_price()).powi(2);
-        }
-        let stdev = (variation / data.len() as f64).sqrt();
 
         let mid = if exponential {
             MovingAverage::exponential(&data).inner()
         } else {
             mean
         };
+
+        let mut variation = 0f64;
+        for elem in data.iter() {
+            variation += (mid - elem.close_price()).powi(2);
+        }
+        let stdev = (variation / data.len() as f64).sqrt();
         let upper = mid + dev_mul * stdev;
         let lower = mid - dev_mul * stdev;
 

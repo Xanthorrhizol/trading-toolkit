@@ -43,15 +43,23 @@ impl Stochastic {
         }
         let mut data = data.to_vec();
         data.sort_by_key(|k| k.epoch_time());
-        let mut sum_numerator = 0f64;
-        let mut sum_denominator = 0f64;
         let last_epoch_time = data.last().unwrap().epoch_time(); // it's safe since the vector's length > 0
-        for elem in data.iter() {
-            sum_numerator += elem.close_price() - elem.low_price();
-            sum_denominator += elem.high_price() - elem.low_price();
-        }
+
+        // 각 bar의 단일 Fast %K를 구한 뒤 SMA → into_slow()와 동일한 로직
+        let fast_values: Vec<Self> = data
+            .iter()
+            .map(|elem| {
+                Self::Fast(
+                    (elem.close_price() - elem.low_price())
+                        / (elem.high_price() - elem.low_price())
+                        * 100f64,
+                    elem.epoch_time(),
+                )
+            })
+            .collect();
+
         Ok(Self::Slow(
-            (sum_numerator / sum_denominator) * 100f64,
+            MovingAverage::simple(&fast_values).inner(),
             last_epoch_time,
         ))
     }
