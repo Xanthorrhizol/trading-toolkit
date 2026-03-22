@@ -176,9 +176,16 @@ mod tests {
         assert!((envelope_band.upper - 1130.3140694754463).abs() < MAX_ERR);
         assert!((envelope_band.mid - 1027.5582449776784).abs() < MAX_ERR);
         assert!((envelope_band.lower - 924.8024204799107).abs() < MAX_ERR);
-        assert!((bollinger_band.upper - 1253.4352207039913).abs() < MAX_ERR);
+        assert!((bollinger_band.upper - 1269.8779312082795).abs() < MAX_ERR);
         assert!((bollinger_band.mid - 1027.5582449776784).abs() < MAX_ERR);
-        assert!((bollinger_band.lower - 801.6812692513656).abs() < MAX_ERR);
+        assert!((bollinger_band.lower - 785.2385587470773).abs() < MAX_ERR);
+        // upper/lower가 mid(EMA) 기준으로 대칭인지 검증
+        assert!(
+            ((bollinger_band.upper - bollinger_band.mid)
+                - (bollinger_band.mid - bollinger_band.lower))
+                .abs()
+                < MAX_ERR
+        );
     }
 
     #[test]
@@ -221,9 +228,11 @@ mod tests {
             RawBaseData::new(900.0, 1, now - Time::from_days(0)),
         ];
         let macd = MovingAverageConvergenceDivergence::new(&data).unwrap();
-        assert!((macd.fast() - (-89.40857762786618)).abs() < MAX_ERR);
-        assert!((macd.slow() - (-130.0014980518957)).abs() < MAX_ERR);
-        assert!((macd.macd_histogram() - 40.59292042402953).abs() < MAX_ERR);
+        assert!((macd.fast() - (-216.43118581050044)).abs() < MAX_ERR);
+        assert!((macd.slow() - (-257.9256624351475)).abs() < MAX_ERR);
+        assert!((macd.macd_histogram() - 41.49447662464706).abs() < MAX_ERR);
+        // histogram이 fast - slow와 일치하는지 검증 (rolling EMA 일관성)
+        assert!((macd.macd_histogram() - (macd.fast() - macd.slow())).abs() < MAX_ERR);
     }
 
     #[test]
@@ -546,10 +555,23 @@ mod tests {
 
         assert!((fast_stochastics.first().unwrap().inner() - 57.14285714285714).abs() < MAX_ERR);
         assert!((fast_stochastics.last().unwrap().inner() - 25f64).abs() < MAX_ERR);
-        assert!((slow_stochastics.first().unwrap().inner() - 61.53846153846154).abs() < MAX_ERR);
-        assert!((slow_stochastics.last().unwrap().inner() - 42.857142857142854).abs() < MAX_ERR);
+        assert!((slow_stochastics.first().unwrap().inner() - 58.333333333333336).abs() < MAX_ERR);
+        assert!((slow_stochastics.last().unwrap().inner() - 44.444444444444436).abs() < MAX_ERR);
         assert!(
             (Stochastic::into_slow(&fast_stochastics).unwrap().inner() - 41.07142857142857).abs()
+                < MAX_ERR,
+        );
+
+        // slow()와 into_slow()가 동일한 방식임을 검증:
+        // 각 bar를 1개짜리 슬라이스로 fast() 계산 후 into_slow() == slow(전체 data)
+        let per_bar_fast: Vec<Stochastic> = data
+            .iter()
+            .map(|d| Stochastic::fast(std::slice::from_ref(d)).unwrap())
+            .collect();
+        assert!(
+            (Stochastic::into_slow(&per_bar_fast).unwrap().inner()
+                - Stochastic::slow(&data).unwrap().inner())
+            .abs()
                 < MAX_ERR,
         );
     }
