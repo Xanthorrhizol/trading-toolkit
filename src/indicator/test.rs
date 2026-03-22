@@ -552,5 +552,18 @@ mod tests {
             (Stochastic::into_slow(&fast_stochastics).unwrap().inner() - 41.07142857142857).abs()
                 < MAX_ERR,
         );
+
+        // slow()와 into_slow()가 동일한 방식임을 검증:
+        // 각 bar를 1개짜리 슬라이스로 fast() 계산 후 into_slow() == slow(전체 data)
+        let per_bar_fast: Vec<Stochastic> = data
+            .iter()
+            .map(|d| Stochastic::fast(std::slice::from_ref(d)).unwrap())
+            .collect();
+        assert!(
+            (Stochastic::into_slow(&per_bar_fast).unwrap().inner()
+                - Stochastic::slow(&data).unwrap().inner())
+            .abs()
+                < MAX_ERR,
+        );
     }
 }
