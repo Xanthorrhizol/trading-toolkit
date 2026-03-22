@@ -179,6 +179,13 @@ mod tests {
         assert!((bollinger_band.upper - 1269.8779312082795).abs() < MAX_ERR);
         assert!((bollinger_band.mid - 1027.5582449776784).abs() < MAX_ERR);
         assert!((bollinger_band.lower - 785.2385587470773).abs() < MAX_ERR);
+        // upper/lower가 mid(EMA) 기준으로 대칭인지 검증
+        assert!(
+            ((bollinger_band.upper - bollinger_band.mid)
+                - (bollinger_band.mid - bollinger_band.lower))
+                .abs()
+                < MAX_ERR
+        );
     }
 
     #[test]
@@ -224,6 +231,8 @@ mod tests {
         assert!((macd.fast() - (-216.43118581050044)).abs() < MAX_ERR);
         assert!((macd.slow() - (-257.9256624351475)).abs() < MAX_ERR);
         assert!((macd.macd_histogram() - 41.49447662464706).abs() < MAX_ERR);
+        // histogram이 fast - slow와 일치하는지 검증 (rolling EMA 일관성)
+        assert!((macd.macd_histogram() - (macd.fast() - macd.slow())).abs() < MAX_ERR);
     }
 
     #[test]
